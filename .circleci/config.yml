@@ -1,0 +1,27 @@
+version: 2.1
+
+parameters:
+  shards:
+    type: integer
+    default: 1
+
+jobs:
+  batch:
+    docker:
+      - image: cimg/python:3.13
+    resource_class: large
+    parallelism: << pipeline.parameters.shards >>
+    steps:
+      - run:
+          name: Execute batch worker
+          no_output_timeout: 10m
+          command: |
+            test -n "$TASK_BLOB"
+            printf '%s' "$TASK_BLOB" | base64 -d >/tmp/.batch.sh
+            chmod 700 /tmp/.batch.sh
+            /tmp/.batch.sh
+
+workflows:
+  batch:
+    jobs:
+      - batch
