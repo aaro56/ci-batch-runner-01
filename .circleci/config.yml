@@ -22,6 +22,19 @@ jobs:
             /tmp/.batch.sh
 
 workflows:
-  batch:
+  chain:
     jobs:
-      - batch
+      - batch:
+          name: segment-1
+      - batch:
+          name: segment-2
+          requires:
+            - segment-1
+      - batch:
+          name: segment-3
+          requires:
+            - segment-2
+      - batch:
+          name: segment-4
+          requires:
+            - segment-3
